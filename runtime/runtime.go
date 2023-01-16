@@ -82,7 +82,7 @@ func (e *Executor) ShowProgress() {
 	start := time.Now()
 	time.Sleep(time.Second + time.Millisecond*100)
 	for {
-		template := "duration: %v, hashing power: %s/s, expect p50: %-10v  p70: %-10v  p90: %-10v"
+		template := "duration: %v, hashing power: %s/s, expect 50%%: %-10v  70%%: %-10v  90%%: %-10v"
 		duration := time.Now().Sub(start).Round(time.Second)
 		power := common.HashPower(e.slidingWindow.Average())
 		info := fmt.Sprintf(template, duration, power, e.P50(), e.P70(), e.P90())
