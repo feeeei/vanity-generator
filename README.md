@@ -1,25 +1,27 @@
+English | [中文](./README_zh-CN.md)
+
 # vanity-generator
 
-`vanity-generator` 是一款基于Go语言实现的区块链钱包靓号生成工具，效率超高，单核可以做到每秒近3w次，多核每秒几十万次。
-
-现支持`ethureum`、`tron`两种网络的钱包生成。
+`vanity-generator` is a high-efficiency blockchain wallet vanity address generation tool implemented in Go language. With a single core, it can generate nearly 30,000 times per second, and with multiple cores, it can generate hundreds of thousands of times per second. It currently supports wallet generation for Ethereum and Tron networks.
 
 ![preview](images/preview.jpg)
 
-### 特性：
-- 纯本地生成，不联网，可作为冷钱包使用
-- 基于Go语言实现，生成效率<strong>几十倍</strong>于[前端JS版本](https://vanity-eth.tk/)
-- 支持前缀+后缀指定，支持同时指定
-- 提供预计耗时，默认提供50%概率、70%概率、90%概率的预计耗时
-- 原生高并发支持，默认打满CPU核数
+### Features:
 
-### 使用
-命令：`./vanity {eth/tron} --prefix=xxxx --suffix=xxx --concurrency=1`
+- Purely local generation, no internet connection required, can be used as a cold wallet
+- 100% based on the official project code of [go-ethereum](https://github.com/ethereum/go-ethereum), providing better security
+- Implemented in Go language, generating efficiency is <strong>several tens of times</strong> higher than the [JS version](https://vanity-eth.tk/)
+- Supports specifying prefix and suffix, supports specifying both at the same time
+- Provides estimated time, default provides estimated time of 50%, 70%, 90% probability
+- Native high concurrency support, default uses all CPU cores
 
-推荐搭配 `screen` 或者 `nohup` 等命令使用。
+### Usage:
+Command: `./vanity {eth/tron} --prefix=xxxx --suffix=xxx --concurrency=1`
 
-### 参数说明
-- `--prefix`: 前缀指定，ETH需要 `0x` 开头，Tron需要 `T` 开头。
-- `--suffix`: 后缀指定，ETH需要 [0-9A-Fa-f]，Tron需要满足 Base58。
-- `--concurrency`: 并发数量，不传递默认等于CPU核数。
+It is recommended to use with commands such as `screen` or `nohup`.
 
+### Parameter Description:
+
+- `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`.
+- `--suffix`: Specify suffix, ETH needs to satisfy [0-9A-Fa-f], Tron needs to satisfy Base58.
+- `--concurrency`: Number of concurrent processes, if not specified, it is equal to the number of CPU cores by default.
