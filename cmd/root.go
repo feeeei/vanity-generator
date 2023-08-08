@@ -3,7 +3,10 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
+	"os"
 	"runtime"
+	"strings"
 	"vanity-generator/cmd/args"
 )
 
@@ -37,7 +40,11 @@ func initConfig() {
 	viper.AddConfigPath("/etc/vanity")
 	viper.SetConfigType("json")
 	viper.AllowEmptyEnv(true)
-	_ = viper.ReadInConfig()
+	if err := viper.ReadInConfig(); err != nil {
+		if !strings.Contains(err.Error(), "Not Found") {
+			log.Fatalf("read config.json error: %+v", err)
+		}
+	}
 
 	// env
 	viper.AutomaticEnv()
@@ -46,6 +53,10 @@ func initConfig() {
 	_ = viper.BindPFlag("prefix", rootCmd.Flag("prefix"))
 	_ = viper.BindPFlag("suffix", rootCmd.Flag("suffix"))
 	_ = viper.BindPFlag("concurrency", rootCmd.Flag("concurrency"))
+
+	if len(os.Args) == 1 && viper.GetString("wallet") != "" {
+		os.Args = append(os.Args, viper.GetString("wallet"))
+	}
 }
 
 func addCommand(name, desc string, checkFn func(args.Args) error, runFn func(args.Args)) {
