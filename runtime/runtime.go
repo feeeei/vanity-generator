@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"vanity-generator/cmd/args"
 	"vanity-generator/common"
 	"vanity-generator/cryptos"
 	"vanity-generator/cryptos/ethereum"
@@ -14,17 +15,16 @@ import (
 )
 
 type Executor struct {
-	prefix, suffix string
-	concurrency    int32
-	diff           float64
-	generator      cryptos.Generator
+	args      args.Args
+	diff      float64
+	generator cryptos.Generator
 
 	ctx           *context.Context
 	slidingWindow *sliding.SlidingWindow
 	wallet        *model.Wallet
 }
 
-func NewExecutor(symbol, prefix, suffix string, concurrency int32) *Executor {
+func NewExecutor(symbol string, args args.Args) *Executor {
 	var generator cryptos.Generator
 	switch symbol {
 	case "eth":
@@ -36,10 +36,8 @@ func NewExecutor(symbol, prefix, suffix string, concurrency int32) *Executor {
 	}
 
 	return &Executor{
-		prefix:        prefix,
-		suffix:        suffix,
-		concurrency:   concurrency,
-		diff:          float64(generator.Difficulty(prefix, suffix)),
+		args:          args,
+		diff:          float64(generator.Difficulty(args.Prefix, args.Suffix)),
 		ctx:           context.NewContext(),
 		generator:     generator,
 		slidingWindow: sliding.NewSlidingWindow(30),
@@ -47,7 +45,7 @@ func NewExecutor(symbol, prefix, suffix string, concurrency int32) *Executor {
 }
 
 func (e *Executor) Start() *model.Wallet {
-	for i := int32(0); i < e.concurrency; i++ {
+	for i := int32(0); i < e.args.Concurrency; i++ {
 		go e.exec()
 	}
 
@@ -61,7 +59,7 @@ func (e *Executor) Start() *model.Wallet {
 
 func (e *Executor) exec() {
 	for !e.ctx.IsDone() {
-		if wallet := e.generator.DoSingle(e.prefix, e.suffix); wallet != nil {
+		if wallet := e.generator.DoSingle(e.args.Prefix, e.args.Suffix); wallet != nil {
 			e.ctx.Finish()
 			e.wallet = wallet
 		}
@@ -82,7 +80,7 @@ func (e *Executor) ShowProgress() {
 	start := time.Now()
 	time.Sleep(time.Second + time.Millisecond*100)
 	for {
-		template := "duration: %v, hashing power: %s/s, expect p50: %-10v  p70: %-10v  p90: %-10v"
+		template := "duration: %v, hashing power: %s/s, expect 50%%: %-10v  70%%: %-10v  90%%: %-10v"
 		duration := time.Now().Sub(start).Round(time.Second)
 		power := common.HashPower(e.slidingWindow.Average())
 		info := fmt.Sprintf(template, duration, power, e.P50(), e.P70(), e.P90())
