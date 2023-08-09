@@ -30,7 +30,11 @@ Create a configuration file at /etc/vanity/config.json with the following format
   "concurrency": 1
 }
 ```
-Command: `docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei:vanity`
+Command: 
+```shell
+docker pull feeeei/vanity-generator
+docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei/vanity-generator
+```
 
 ### Parameter Description:
 

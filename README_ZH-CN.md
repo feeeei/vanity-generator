@@ -31,7 +31,11 @@
   "concurrency": 1
 }
 ```
-命令：`docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei:vanity`
+命令：
+```shell
+docker pull feeeei/vanity-generator
+docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei/vanity-generator
+```
 
 ### 参数说明
 - `--prefix`: 前缀指定，ETH需要 `0x` 开头，Tron需要 `T` 开头。
