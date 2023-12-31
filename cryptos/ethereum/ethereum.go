@@ -21,7 +21,9 @@ func NewEthereumGenerator() *EthereumGenerator {
 }
 
 func (g *EthereumGenerator) Difficulty(prefix, suffix string) (count int64) {
-	if len(prefix) > 2 {
+	if len(prefix) < 2 {
+		prefix = ""
+	} else {
 		prefix = prefix[2:]
 	}
 	num, letter := word(prefix + suffix)

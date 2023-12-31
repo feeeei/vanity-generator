@@ -8,6 +8,7 @@ import (
 	"vanity-generator/common"
 	"vanity-generator/cryptos"
 	"vanity-generator/cryptos/ethereum"
+	"vanity-generator/cryptos/polkadot"
 	"vanity-generator/cryptos/tron"
 	"vanity-generator/model"
 	"vanity-generator/pkg/context"
@@ -31,6 +32,8 @@ func NewExecutor(symbol string, args args.Args) *Executor {
 		generator = ethereum.NewEthereumGenerator()
 	case "tron":
 		generator = tron.NewTronGenerator()
+	case "polkadot":
+		generator = polkadot.NewPolkadotGenerator()
 	default:
 		panic(fmt.Sprintf("unknow symbol %s", symbol))
 	}
