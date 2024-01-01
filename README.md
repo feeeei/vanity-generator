@@ -4,6 +4,8 @@ English | [中文](./README_ZH-CN.md)
 
 `vanity-generator` is a blockchain wallet vanity number generator implemented in Go. It is highly efficient, capable of generating over 200,000 vanity addresses per second on a single core and millions per second on multiple cores.
 
+Wallet generation is currently supported for three networks: `Ethereum`、`Tron`、`Polkadot`.
+
 ![preview](images/preview.jpg)
 
 ### Features:
@@ -16,7 +18,7 @@ English | [中文](./README_ZH-CN.md)
 - Native high concurrency support, default uses all CPU cores
 
 ### Native Usage:
-Command: `./vanity {eth/tron} --prefix=xxxx --suffix=xxx --concurrency=1`
+Command: `./vanity {eth/tron/dot} --prefix=xxxx --suffix=xxx --concurrency=1`
 
 It is recommended to use with commands such as `screen` or `nohup`.
 

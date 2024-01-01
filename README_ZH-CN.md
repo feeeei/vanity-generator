@@ -4,7 +4,7 @@
 
 `vanity-generator` 是一款基于Go语言实现的区块链钱包靓号生成工具，效率超高，单核可以做到每秒生成超过20w+次，多核每秒几百万次。
 
-现支持`ethureum`、`tron`两种网络的钱包生成。
+现支持`ethureum`、`tron`、`polkadot`三种网络的钱包生成。
 
 ![preview](images/preview.jpg)
 
@@ -17,7 +17,7 @@
 - 原生高并发支持，默认打满CPU核数
 
 ### 原生使用
-命令：`./vanity {eth/tron} --prefix=xxxx --suffix=xxx --concurrency=1`
+命令：`./vanity {eth/tron/dot} --prefix=xxxx --suffix=xxx --concurrency=1`
 
 推荐搭配 `screen` 或者 `nohup` 等命令使用。
 
