@@ -1,3 +1,5 @@
+
+
 English | [中文](./README_ZH-CN.md)
 
 # vanity-generator
@@ -40,6 +42,6 @@ docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei/vanity-generator
 
 ### Parameter Description:
 
-- `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`.
+- `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`, Polkadot needs to start with `1`.
 - `--suffix`: Specify suffix, ETH needs to satisfy [0-9A-Fa-f], Tron needs to satisfy Base58.
 - `--concurrency`: Number of concurrent processes, if not specified, it is equal to the number of CPU cores by default.
