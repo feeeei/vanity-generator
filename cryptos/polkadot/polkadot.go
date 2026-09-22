@@ -81,11 +81,16 @@ func (g *PolkadotGenerator) address(entropy []byte) string {
 	return subkey.SS58Encode(code[:], 0)
 }
 
+// firstDiff 是地址第二位字符的期望尝试次数。主网地址以 1 开头，其后是 34 字节大端整数的 base58 编码：
+// 该整数多数情况下有 47 位，首位只能是 1 到 5，即字符 2 到 6，其中 6 只占部分区间；
+// 约 17% 的情况整数只有 46 位，此时第二位在 58 个字符里近似均匀。数值按 60 万个随机 sr25519 公钥统计得出
 func firstDiff(char byte) float64 {
 	switch char {
-	case 2, 3, 4, 5, 6:
-		return 5.988
+	case '2', '3', '4', '5':
+		return 5.7 // 出现概率各约 17.5%
+	case '6':
+		return 7.2 // 出现概率约 13.8%
 	default:
-		return 297.78
+		return 330 // 其余字符出现概率各约 0.3%
 	}
 }

@@ -49,3 +49,24 @@ func TestDoSingleWords(t *testing.T) {
 		}
 	}
 }
+
+func TestDifficulty(t *testing.T) {
+	g := NewPolkadotGenerator(12)
+	tests := []struct {
+		prefix, suffix string
+		want           int64
+	}{
+		{"", "", 1},
+		{"1", "", 1},
+		{"12", "", 5},
+		{"16", "", 7},
+		{"1a", "", 330},
+		{"12x", "", 330}, // 5.7 * 58 = 330.6
+		{"", "xy", 58 * 58},
+	}
+	for _, tt := range tests {
+		if got := g.Difficulty(tt.prefix, tt.suffix); got != tt.want {
+			t.Errorf("Difficulty(%q, %q) = %d, want %d", tt.prefix, tt.suffix, got, tt.want)
+		}
+	}
+}
