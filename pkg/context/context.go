@@ -23,9 +23,9 @@ func (c *Context) IsDone() bool {
 	return atomic.LoadInt64(&c.done) != 0
 }
 
+// Finish 结束等待，多个 worker 同时调用时只有第一次生效
 func (c *Context) Finish() {
-	if atomic.LoadInt64(&c.done) == 0 {
-		c.done = 1
+	if atomic.CompareAndSwapInt64(&c.done, 0, 1) {
 		c.wait.Done()
 	}
 }

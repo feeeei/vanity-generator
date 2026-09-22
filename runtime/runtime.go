@@ -3,6 +3,7 @@ package runtime
 import (
 	"fmt"
 	"log"
+	"sync"
 	"time"
 	"vanity-generator/cmd/args"
 	"vanity-generator/common"
@@ -23,6 +24,7 @@ type Executor struct {
 
 	ctx           *context.Context
 	slidingWindow *sliding.SlidingWindow
+	once          sync.Once
 	wallet        *model.Wallet
 }
 
@@ -66,8 +68,11 @@ func (e *Executor) Start() *model.Wallet {
 func (e *Executor) exec() {
 	for !e.ctx.IsDone() {
 		if wallet := e.generator.DoSingle(e.args.Prefix, e.args.Suffix); wallet != nil {
-			e.ctx.Finish()
-			e.wallet = wallet
+			// 只采用第一个结果，并且先记录结果再结束等待，避免主协程拿到 nil
+			e.once.Do(func() {
+				e.wallet = wallet
+				e.ctx.Finish()
+			})
 		}
 		e.ctx.Increment()
 	}
