@@ -14,6 +14,9 @@ func init() {
 }
 
 func validatePolkadot(args args.Args) error {
+	if err := validateWords(args); err != nil {
+		return err
+	}
 	if args.Prefix != "" && !strings.HasPrefix(args.Prefix, "1") {
 		return errors.New("polkadot address should be prefixed with 1")
 	}

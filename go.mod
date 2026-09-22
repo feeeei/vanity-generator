@@ -5,6 +5,8 @@ go 1.27.0
 require (
 	filippo.io/edwards25519 v1.2.0
 	github.com/ChainSafe/go-schnorrkel v1.1.0
+	github.com/btcsuite/btcd/btcutil/v2 v2.0.1
+	github.com/btcsuite/btcd/chaincfg/v2 v2.0.0
 	github.com/ethereum/go-ethereum v1.17.5
 	github.com/mr-tron/base58 v1.3.0
 	github.com/spf13/cobra v1.10.2
@@ -16,6 +18,10 @@ require (
 
 require (
 	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20260904015846-89a2b745b5c2 // indirect
+	github.com/btcsuite/btcd/address/v2 v2.0.0 // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.5.0 // indirect
+	github.com/btcsuite/btcd/chainhash/v2 v2.0.0 // indirect
+	github.com/btcsuite/btcd/wire/v2 v2.0.1 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/decred/base58 v1.0.6 // indirect
 	github.com/decred/dcrd/crypto/blake256 v1.1.0 // indirect

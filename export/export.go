@@ -13,7 +13,16 @@ func Export(wallet *model.Wallet) {
 }
 
 func toConsole(wallet *model.Wallet) {
-	fmt.Println("genertaor wallet private_key:", wallet.Private, "address:", wallet.Public)
+	fmt.Println("generator wallet address:", wallet.Public)
+	if wallet.Private != "" {
+		fmt.Println("private_key:", wallet.Private)
+	}
+	if wallet.Mnemonic != "" {
+		fmt.Println("mnemonic:", wallet.Mnemonic)
+	}
+	if wallet.Path != "" {
+		fmt.Println("path:", wallet.Path)
+	}
 }
 
 func toFile(wallet *model.Wallet) {

@@ -29,7 +29,9 @@ Create a configuration file at /etc/vanity/config.json with the following format
   "wallet": "eth",
   "prefix": "xxxx",
   "suffix": "xxxx",
-  "concurrency": 1
+  "concurrency": 1,
+  "mnemonic": false,
+  "words": 24
 }
 ```
 Command: 
@@ -43,4 +45,7 @@ docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei/vanity-generator
 - `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`, Monero needs to start with `4` and its second character can only be `1-9`, `A` or `B`.
 - `--suffix`: Specify suffix, ETH needs to satisfy [0-9A-Fa-f], Tron and Monero need to satisfy Base58.
 - `--concurrency`: Number of concurrent processes, if not specified, it is equal to the number of CPU cores by default.
-- Monero generates standard mainnet addresses (starting with `4`), and the `private_key` output is the 25-word mnemonic seed.
+- `--mnemonic`: Derive ETH/Tron wallets from a BIP39 mnemonic (path `m/44'/60'/0'/0/0` / `m/44'/195'/0'/0/0`, the first account of MetaMask / TronLink) instead of a random private key. Polkadot and Monero are always mnemonic based. Every attempt costs 2048 rounds of PBKDF2, so this mode is about 40x slower than the default one.
+- `--words`: Mnemonic word count, `12` or `24`, default `24`. Passing it implies `--mnemonic` for ETH/Tron. Monero seeds are always 25 words, so it is rejected there.
+- Monero generates standard mainnet addresses (starting with `4`).
+- `wallet.json` fields: `address`, `private_key` (ETH/Tron), `mnemonic` (mnemonic mode, Polkadot and Monero) and `path` (ETH/Tron mnemonic mode).

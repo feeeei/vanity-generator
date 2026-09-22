@@ -15,6 +15,9 @@ func init() {
 }
 
 func validateTron(args args.Args) error {
+	if err := validateWords(args); err != nil {
+		return err
+	}
 	if args.Prefix != "" && !strings.HasPrefix(args.Prefix, "T") {
 		return errors.New("tron address should be prefixed with T")
 	}

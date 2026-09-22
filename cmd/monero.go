@@ -15,6 +15,10 @@ func init() {
 }
 
 func validateMonero(args args.Args) error {
+	// Monero 的种子固定为 25 个词，不支持选择字数
+	if args.Words != 0 {
+		return errors.New("monero seed is always 25 words, --words is not supported")
+	}
 	if args.Prefix != "" && !strings.HasPrefix(args.Prefix, "4") {
 		return errors.New("monero address should be prefixed with 4")
 	}

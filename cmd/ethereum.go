@@ -15,6 +15,9 @@ func init() {
 }
 
 func validateEthereum(args args.Args) error {
+	if err := validateWords(args); err != nil {
+		return err
+	}
 	if args.Prefix != "" && !strings.HasPrefix(args.Prefix, "0x") {
 		return errors.New("ethereum address should be prefixed with 0x")
 	}

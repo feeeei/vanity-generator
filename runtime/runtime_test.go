@@ -10,7 +10,7 @@ import (
 func TestStartReturnsWallet(t *testing.T) {
 	for i := 0; i < 20; i++ {
 		wallet := NewExecutor("monero", args.Args{Prefix: "4", Concurrency: 8}).Start()
-		if wallet == nil || wallet.Public == "" {
+		if wallet == nil || wallet.Public == "" || wallet.Mnemonic == "" {
 			t.Fatalf("round %d: unexpected wallet %+v", i, wallet)
 		}
 	}

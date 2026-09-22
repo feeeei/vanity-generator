@@ -32,6 +32,8 @@ func initCommand() {
 	rootCmd.PersistentFlags().StringVar(&arg.Prefix, "prefix", "", "address prefix")
 	rootCmd.PersistentFlags().StringVar(&arg.Suffix, "suffix", "", "address suffix")
 	rootCmd.PersistentFlags().Int32Var(&arg.Concurrency, "concurrency", int32(runtime.NumCPU()), "concurrency limit")
+	rootCmd.PersistentFlags().BoolVar(&arg.Mnemonic, "mnemonic", false, "derive eth/tron wallets from a BIP39 mnemonic instead of a random private key (dot and xmr are always mnemonic based)")
+	rootCmd.PersistentFlags().Int32Var(&arg.Words, "words", 0, "mnemonic word count, 12 or 24, default 24; implies --mnemonic for eth/tron; xmr is always 25 words")
 }
 
 func initConfig() {
@@ -53,6 +55,8 @@ func initConfig() {
 	_ = viper.BindPFlag("prefix", rootCmd.Flag("prefix"))
 	_ = viper.BindPFlag("suffix", rootCmd.Flag("suffix"))
 	_ = viper.BindPFlag("concurrency", rootCmd.Flag("concurrency"))
+	_ = viper.BindPFlag("mnemonic", rootCmd.Flag("mnemonic"))
+	_ = viper.BindPFlag("words", rootCmd.Flag("words"))
 
 	if len(os.Args) == 1 && viper.GetString("wallet") != "" {
 		os.Args = append(os.Args, viper.GetString("wallet"))
@@ -67,6 +71,8 @@ func addCommand(name, desc string, checkFn func(args.Args) error, runFn func(arg
 			arg.Prefix = viper.GetString("prefix")
 			arg.Suffix = viper.GetString("suffix")
 			arg.Concurrency = viper.GetInt32("concurrency")
+			arg.Mnemonic = viper.GetBool("mnemonic")
+			arg.Words = viper.GetInt32("words")
 			return checkFn(arg)
 		},
 		Run: func(cmd *cobra.Command, args []string) {

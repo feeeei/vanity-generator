@@ -5,11 +5,13 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mr-tron/base58"
+	"log"
 	"math"
 	"strings"
 	"sync"
 	"vanity-generator/common"
 	"vanity-generator/cryptos"
+	"vanity-generator/cryptos/hdwallet"
 	"vanity-generator/model"
 )
 
@@ -17,10 +19,13 @@ var _ cryptos.Generator = (*TronGenerator)(nil)
 
 type TronGenerator struct {
 	addrPool *sync.Pool
+	words    int // 助记词单词数，0 表示直接生成随机私钥
 }
 
-func NewTronGenerator() *TronGenerator {
+// NewTronGenerator 构造生成器，words 为 0 时直接随机私钥，为 12 或 24 时按 BIP39 助记词经 m/44'/195'/0'/0/0 派生
+func NewTronGenerator(words int) *TronGenerator {
 	return &TronGenerator{
+		words: words,
 		addrPool: &sync.Pool{
 			New: func() any {
 				addr := [25]byte{0x41}
@@ -50,7 +55,10 @@ func (g *TronGenerator) Difficulty(prefix, suffix string) int64 {
 }
 
 func (g *TronGenerator) DoSingle(prefix, suffix string) *model.Wallet {
-	privateKey, _ := crypto.GenerateKey()
+	mnemonic, privateKey, err := g.newKey()
+	if err != nil {
+		log.Fatal(err)
+	}
 	publicKey := privateKey.Public()
 	publicKeyECDSA := publicKey.(*ecdsa.PublicKey)
 
@@ -58,12 +66,26 @@ func (g *TronGenerator) DoSingle(prefix, suffix string) *model.Wallet {
 	public := g.hexToBase58CheckAddress(hex)
 
 	if strings.HasPrefix(public, prefix) && strings.HasSuffix(public, suffix) {
-		return &model.Wallet{
+		wallet := &model.Wallet{
 			Private: hexutil.Encode(crypto.FromECDSA(privateKey))[2:],
 			Public:  public,
 		}
+		if mnemonic != "" {
+			wallet.Mnemonic = mnemonic
+			wallet.Path = hdwallet.Path(hdwallet.CoinTron)
+		}
+		return wallet
 	}
 	return nil
+}
+
+// newKey 生成一把新私钥，助记词模式下同时返回助记词
+func (g *TronGenerator) newKey() (mnemonic string, key *ecdsa.PrivateKey, err error) {
+	if g.words == 0 {
+		key, err = crypto.GenerateKey()
+		return "", key, err
+	}
+	return hdwallet.NewKey(g.words, hdwallet.CoinTron)
 }
 
 func (g *TronGenerator) hexToBase58CheckAddress(hex []byte) string {

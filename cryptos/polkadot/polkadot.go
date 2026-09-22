@@ -24,14 +24,15 @@ type PolkadotGenerator struct {
 	entropyPool *sync.Pool
 }
 
-func NewPolkadotGenerator() *PolkadotGenerator {
+// NewPolkadotGenerator 构造生成器，words 为助记词单词数（12 或 24），Substrate 钱包始终由 BIP39 助记词派生
+func NewPolkadotGenerator(words int) *PolkadotGenerator {
 	out, _ := os.Open(os.DevNull)
+	entropySize := words / 3 * 4 // 12 词 16 字节，24 词 32 字节
 	return &PolkadotGenerator{
 		writer: out,
 		entropyPool: &sync.Pool{
 			New: func() any {
-				addr := [128 / 8]byte{}
-				return addr[:]
+				return make([]byte, entropySize)
 			},
 		},
 	}
@@ -58,20 +59,26 @@ func (g *PolkadotGenerator) DoSingle(prefix string, suffix string) *model.Wallet
 
 	_, _ = rand.Read(entropy)
 
-	seed := pbkdf2.Key(entropy, []byte("mnemonic"), 2048, 64, sha512.New)
-	ms, _ := schnorrkel.NewMiniSecretKeyFromRaw(*(*[32]byte)(unsafe.Pointer(&seed[0])))
-
-	code := ms.Public().Encode()
-	address := subkey.SS58Encode(code[:], 0)
+	address := g.address(entropy)
 
 	if strings.HasPrefix(address, prefix) && strings.HasSuffix(address, suffix) {
 		mnemonic, _ := bip39.NewMnemonic(entropy)
 		return &model.Wallet{
-			Private: mnemonic,
-			Public:  address,
+			Mnemonic: mnemonic,
+			Public:   address,
 		}
 	}
 	return nil
+}
+
+// address 按 Substrate 规则从 BIP39 熵推导 sr25519 密钥并编码为 SS58 地址：
+// mini secret 取 PBKDF2(熵, "mnemonic", 2048 轮) 的前 32 字节，与 polkadot.js 一致
+func (g *PolkadotGenerator) address(entropy []byte) string {
+	seed := pbkdf2.Key(entropy, []byte("mnemonic"), 2048, 64, sha512.New)
+	ms, _ := schnorrkel.NewMiniSecretKeyFromRaw(*(*[32]byte)(unsafe.Pointer(&seed[0])))
+
+	code := ms.Public().Encode()
+	return subkey.SS58Encode(code[:], 0)
 }
 
 func firstDiff(char byte) float64 {

@@ -67,8 +67,8 @@ func (g *MoneroGenerator) DoSingle(prefix, suffix string) *model.Wallet {
 	address := key.Address(MoneroMainNetwork)
 	if strings.HasPrefix(address, prefix) && strings.HasSuffix(address, suffix) {
 		return &model.Wallet{
-			Private: strings.Join(English.Encode(key.Seed())[:], " "),
-			Public:  address,
+			Mnemonic: strings.Join(English.Encode(key.Seed())[:], " "),
+			Public:   address,
 		}
 	}
 	return nil

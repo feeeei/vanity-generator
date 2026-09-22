@@ -101,3 +101,20 @@ func TestDifficulty(t *testing.T) {
 		}
 	}
 }
+
+// 主网地址均以 4 开头，前缀 4 必然匹配
+func TestDoSingle(t *testing.T) {
+	wallet := NewMoneroGenerator().DoSingle("4", "")
+	if wallet == nil {
+		t.Fatal("expected a wallet")
+	}
+	if n := len(strings.Fields(wallet.Mnemonic)); n != 25 {
+		t.Errorf("mnemonic has %d words, want 25", n)
+	}
+	if wallet.Private != "" || wallet.Path != "" {
+		t.Errorf("monero wallet should only output the mnemonic: %+v", wallet)
+	}
+	if len(wallet.Public) != 95 || wallet.Public[0] != '4' {
+		t.Errorf("unexpected address %s", wallet.Public)
+	}
+}

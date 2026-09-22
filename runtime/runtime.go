@@ -32,11 +32,11 @@ func NewExecutor(symbol string, args args.Args) *Executor {
 	var generator cryptos.Generator
 	switch symbol {
 	case "eth":
-		generator = ethereum.NewEthereumGenerator()
+		generator = ethereum.NewEthereumGenerator(mnemonicWords(args))
 	case "tron":
-		generator = tron.NewTronGenerator()
+		generator = tron.NewTronGenerator(mnemonicWords(args))
 	case "polkadot":
-		generator = polkadot.NewPolkadotGenerator()
+		generator = polkadot.NewPolkadotGenerator(wordsOrDefault(args.Words))
 	case "monero":
 		generator = monero.NewMoneroGenerator()
 	default:
@@ -50,6 +50,21 @@ func NewExecutor(symbol string, args args.Args) *Executor {
 		generator:     generator,
 		slidingWindow: sliding.NewSlidingWindow(30),
 	}
+}
+
+// mnemonicWords 返回 eth、tron 使用的助记词单词数，0 表示不用助记词而直接随机私钥
+func mnemonicWords(args args.Args) int {
+	if !args.Mnemonic && args.Words == 0 {
+		return 0
+	}
+	return wordsOrDefault(args.Words)
+}
+
+func wordsOrDefault(words int32) int {
+	if words == 0 {
+		return cryptos.DefaultMnemonicWords
+	}
+	return int(words)
 }
 
 func (e *Executor) Start() *model.Wallet {
