@@ -4,7 +4,7 @@ English | [中文](./README_ZH-CN.md)
 
 `vanity-generator` is a blockchain wallet vanity number generator implemented in Go. It is highly efficient, capable of generating over 200,000 vanity addresses per second on a single core and millions per second on multiple cores.
 
-Wallet generation is currently supported for three networks: `Ethereum`、`Tron`、`Polkadot`.
+Wallet generation is currently supported for four networks: `Ethereum`、`Tron`、`Polkadot`、`Monero`.
 
 ![preview](images/preview.jpg)
 
@@ -18,7 +18,7 @@ Wallet generation is currently supported for three networks: `Ethereum`、`Tron`
 - Native high concurrency support, default uses all CPU cores
 
 ### Native Usage:
-Command: `./vanity {eth/tron/dot} --prefix=xxxx --suffix=xxx --concurrency=1`
+Command: `./vanity {eth/tron/dot/xmr} --prefix=xxxx --suffix=xxx --concurrency=1`
 
 It is recommended to use with commands such as `screen` or `nohup`.
 
@@ -40,6 +40,7 @@ docker run --name=vanity -v /etc/vanity:/etc/vanity feeeei/vanity-generator
 
 ### Parameter Description:
 
-- `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`.
-- `--suffix`: Specify suffix, ETH needs to satisfy [0-9A-Fa-f], Tron needs to satisfy Base58.
+- `--prefix`: Specify prefix, ETH needs to start with `0x`, Tron needs to start with `T`, Monero needs to start with `4` and its second character can only be `1-9`, `A` or `B`.
+- `--suffix`: Specify suffix, ETH needs to satisfy [0-9A-Fa-f], Tron and Monero need to satisfy Base58.
 - `--concurrency`: Number of concurrent processes, if not specified, it is equal to the number of CPU cores by default.
+- Monero generates standard mainnet addresses (starting with `4`), and the `private_key` output is the 25-word mnemonic seed.

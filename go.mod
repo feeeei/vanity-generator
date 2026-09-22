@@ -3,6 +3,7 @@ module vanity-generator
 go 1.27.0
 
 require (
+	filippo.io/edwards25519 v1.2.0
 	github.com/ChainSafe/go-schnorrkel v1.1.0
 	github.com/ethereum/go-ethereum v1.17.5
 	github.com/mr-tron/base58 v1.3.0
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20260904015846-89a2b745b5c2 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/decred/base58 v1.0.6 // indirect
