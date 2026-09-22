@@ -3,6 +3,7 @@ package runtime
 import (
 	"fmt"
 	"log"
+	"math"
 	"sync"
 	"time"
 	"vanity-generator/cmd/args"
@@ -102,34 +103,29 @@ func (e *Executor) collection() {
 	}
 }
 
+// maxEtaSeconds 是 time.Duration 能表示的最长秒数，超出即视为无法估算
+const maxEtaSeconds = float64(math.MaxInt64 / int64(time.Second))
+
 func (e *Executor) ShowProgress() {
 	start := time.Now()
 	time.Sleep(time.Second + time.Millisecond*100)
 	for {
-		template := "duration: %v, hashing power: %s/s, expect 50%%: %-10v  70%%: %-10v  90%%: %-10v"
-		duration := time.Now().Sub(start).Round(time.Second)
-		power := common.HashPower(e.slidingWindow.Average())
-		info := fmt.Sprintf(template, duration, power, e.P50(), e.P70(), e.P90())
+		// 各列固定宽度，让多行输出上下对齐
+		template := "duration: %-9s  hashing power: %-10s  P50: %-14s  P70: %-14s  P90: %s"
+		duration := common.FormatDuration(time.Since(start))
+		power := common.HashPower(e.slidingWindow.Average()) + "/s"
+		info := fmt.Sprintf(template, duration, power, e.eta(0.5), e.eta(0.7), e.eta(0.9))
 		log.Println(info)
 
 		time.Sleep(time.Second * 3)
 	}
 }
 
-func (e *Executor) P50() time.Duration {
-	return e.p(0.5)
-}
-
-func (e *Executor) P70() time.Duration {
-	return e.p(0.7)
-}
-
-func (e *Executor) P90() time.Duration {
-	return e.p(0.9)
-}
-
-func (e *Executor) p(probability float64) time.Duration {
-	probability = common.Probability(probability, e.diff, e.slidingWindow.Average())
-
-	return time.Second * time.Duration(probability)
+// eta 返回以给定概率找到结果所需时长的可读形式，速度尚未统计到或结果溢出时返回 -
+func (e *Executor) eta(probability float64) string {
+	seconds := common.Probability(probability, e.diff, e.slidingWindow.Average())
+	if math.IsNaN(seconds) || math.IsInf(seconds, 0) || seconds < 0 || seconds > maxEtaSeconds {
+		return "-"
+	}
+	return common.FormatDuration(time.Duration(seconds * float64(time.Second)))
 }
